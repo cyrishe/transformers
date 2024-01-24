@@ -3272,6 +3272,28 @@ class Trainer:
 
             # Prediction step
             loss, logits, labels = self.prediction_step(model, inputs, prediction_loss_only, ignore_keys=ignore_keys)
+     
+            new_labels = []
+            for sent in labels:
+                new_sent_id = []
+                for tid in sent:
+                    if tid < 0:
+                        continue
+                    new_sent_id.append(tid)
+                new_labels.append(new_sent_id)
+
+            pred_str_list = self.tokenizer.batch_decode(new_labels) 
+            inupt_ids = inputs['input_ids']
+
+            input_str_list = self.tokenizer.batch_decode(inupt_ids) 
+
+
+
+            logger.info(f"input str: {input_str_list} *****")
+            logger.info(f"pred str: {pred_str_list} *****")
+
+
+            
             main_input_name = getattr(self.model, "main_input_name", "input_ids")
             inputs_decode = self._prepare_input(inputs[main_input_name]) if args.include_inputs_for_metrics else None
 
